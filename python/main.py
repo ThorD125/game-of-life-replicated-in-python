@@ -90,6 +90,7 @@ neighbors = (
 
 size_x = 50
 size_y = 10
+framesPerSecond = 30
 chars = ["\033[31mr\033[0m", "\033[32mg\033[0m", "\033[33mb\033[0m", "\033[34my\033[0m", "\033[35mo\033[0m", "\033[36mp\033[0m", "\033[37mc\033[0m", "\033[30mm\033[0m"]
 
 gridarray = generateGrid(size_y, size_x, chars)
@@ -99,21 +100,21 @@ count = countGrid(gridarray)
 
 oldCounts = []
 while checkCount(count):
+    print("\033[H\033[J", end="")
     newgrid = createEvolveGrid(gridarray)
     show(newgrid)
     gridarray = newgrid
     newcount = countGrid(gridarray)
     if newcount in oldCounts:
-        print("\033[H\033[J", end="")
-        show(newgrid)
         break
     oldCounts.append(newcount)
     oldCounts = oldCounts[-2:]
     count = newcount
     print(count)
-    # time.sleep(0.1)
-    print("\033[H\033[J", end="")
+    time.sleep(1 / framesPerSecond)
 
+print("\033[H\033[J", end="")
+show(gridarray)
 print(count)
 
 # https://realpython.com/conway-game-of-life-python/
