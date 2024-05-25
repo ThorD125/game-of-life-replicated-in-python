@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 pygame.init()
 
@@ -11,8 +12,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bouncing Circle in a Circle")
 
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+CURRENT_COLOR = BLUE
 
 
 small_circle_radius = 20
@@ -46,6 +50,9 @@ def increase_speed():
     if (speed < big_circle_radius / 2):
         speed += 0.5
 
+def random_color():
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -59,12 +66,13 @@ while running:
         increase_speed()
         vel_magnitude = math.sqrt(velocity[0]**2 + velocity[1]**2)
         velocity = [speed * (velocity[0] / vel_magnitude), speed * (velocity[1] / vel_magnitude)]
+        CURRENT_COLOR = random_color()
         
-    screen.fill(WHITE)
+    screen.fill(BLACK)
 
-    pygame.draw.circle(screen, BLUE, big_circle_center, big_circle_radius, 2)
+    pygame.draw.circle(screen, CURRENT_COLOR, big_circle_center, big_circle_radius, 2)
 
-    pygame.draw.circle(screen, RED, small_circle_pos, small_circle_radius)
+    pygame.draw.circle(screen, WHITE, small_circle_pos, small_circle_radius)
 
     pygame.display.flip()
 
