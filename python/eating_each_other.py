@@ -1,6 +1,7 @@
 import random
 from collections import Counter
 import time
+import sys
 
 def show(grid):
     for row in grid:
@@ -20,10 +21,7 @@ def getLocation(x, y):
     return (x, y)
 
 def getColorLocation(x, y):
-    return gridarray[y][x]
-
-# print(getLocation(17,11))
-# print(neighbors)
+    return grid_array[y][x]
 
 def countInList(list):
     return Counter(list)
@@ -31,25 +29,19 @@ def countInList(list):
 def getNeighbors(x, y):
     neighborList = []
     for dx, dy in neighbors:
-        # print(f"dx: {x, dx}, dy: {y, dy}")
         nx, ny = getLocation(x + dx, y + dy)
-        # print(nx, ny)
-        # print(getColorLocation(nx, ny))
         if (nx, ny) != (x, y):
             neighborList.append(getColorLocation(nx, ny))
     return countInList(neighborList)
         
-# print("locaiton: 5,4")
-# print(getNeighbors(5,4).most_common(1)[0][0])
-
 def createEvolveGrid(grid):
-    newGrid = []
+    new_Grid = []
     for y in range(size_y):
         row = []
         for x in range(size_x):
             row.append(getNeighbors(x, y).most_common(1)[0][0])
-        newGrid.append(row)
-    return newGrid
+        new_Grid.append(row)
+    return new_Grid
 
 def countGrid(grid):
     count = {}
@@ -62,59 +54,63 @@ def countGrid(grid):
 
 def checkCount(count):
     for x in count:
-        # print(f"{x}: {count[x]}")
         if count[x] == (size_x * size_y):
             return False
     return True
 
 def generateGrid(size_y, size_x, chars):
-    gridarray = []
+    grid_array = []
     for y in range(size_y):
         row = []
         for x in range(size_x):
             char = chars[random.randint(0, len(chars)-1)]
             row.append(char)
-        gridarray.append(row)
-    return gridarray
+        grid_array.append(row)
+    return grid_array
 
 neighbors = (
-    (-1, -1),  # Above left
-    (-1, 0),  # Above
-    (-1, 1),  # Above right
-    (0, -1),  # Left
-    (0, 1),  # Right
-    (1, -1),  # Below left
-    (1, 0),  # Below
-    (1, 1),  # Below right
+    (-1, -1),  
+    (-1, 0),  
+    (-1, 1),  
+    (0, -1),  
+    (0, 1),  
+    (1, -1),  
+    (1, 0),  
+    (1, 1),  
 )
 
-size_x = 50
-size_y = 10
 framesPerSecond = 30
 chars = ["\033[31mr\033[0m", "\033[32mg\033[0m", "\033[33mb\033[0m", "\033[34my\033[0m", "\033[35mo\033[0m", "\033[36mp\033[0m", "\033[37mc\033[0m", "\033[30mm\033[0m"]
 
-gridarray = generateGrid(size_y, size_x, chars)
+size_x = 50
+size_y = 10
 
-show(gridarray)
-count = countGrid(gridarray)
+if len(sys.argv) > 1:
+    size_x = int(sys.argv[1])
+    size_y = int(sys.argv[2])
+
+grid_array = generateGrid(size_y, size_x, chars)
+
+show(grid_array)
 
 oldCounts = []
-while checkCount(count):
-    print("\033[H\033[J", end="")
-    newgrid = createEvolveGrid(gridarray)
-    show(newgrid)
-    gridarray = newgrid
-    newcount = countGrid(gridarray)
-    if newcount in oldCounts:
-        break
-    oldCounts.append(newcount)
-    oldCounts = oldCounts[-2:]
-    count = newcount
-    print(count)
-    time.sleep(1 / framesPerSecond)
+
 
 print("\033[H\033[J", end="")
-show(gridarray)
-print(count)
+show(grid_array)
 
-# https://realpython.com/conway-game-of-life-python/
+
+
+while True:
+    print("\033[H\033[J", end="")
+    new_grid = createEvolveGrid(grid_array)
+    show(new_grid)
+    grid_array = new_grid
+
+    new_count = countGrid(grid_array)
+    if new_count in oldCounts:
+        break
+    oldCounts.append(new_count)
+    oldCounts = oldCounts[-2:]
+
+    time.sleep(1 / framesPerSecond)
