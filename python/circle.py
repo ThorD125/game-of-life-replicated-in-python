@@ -3,49 +3,13 @@ import math
 import random
 import threading
 
-py_game.init()
-
-WIDTH, HEIGHT = 800, 600
-speed = 2
-line_width = 5
-
-
-big_circle_center = (WIDTH // 2, HEIGHT // 2)
-big_circle_radius = 200
-
-screen = py_game.display.set_mode((WIDTH, HEIGHT))
-py_game.display.set_caption("Bouncing Circle in a Circle")
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-CURRENT_COLOR = BLUE
-
-small_circle_radius = 20
-small_circle_pos = [WIDTH // 2, HEIGHT // 2 -
-                    big_circle_radius + small_circle_radius]
-velocity = [speed, speed]
-
-clock = py_game.time.Clock()
-angle = math.pi / 5
-collision_point = None
-
-can_play_sound = True
 def _play(mp3_file, volume):
-    try:
-        py_game.mixer.init()
-    except:
-        global can_play_sound
-        can_play_sound = False
-    
-    if can_play_sound:
-        py_game.mixer.music.load(mp3_file)
-        py_game.mixer.music.set_volume(volume)
-        py_game.mixer.music.play()
-        while py_game.mixer.music.get_busy():
-            py_game.time.Clock().tick(10)
+    py_game.mixer.init()
+    py_game.mixer.music.load(mp3_file)
+    py_game.mixer.music.set_volume(volume)
+    py_game.mixer.music.play()
+    while py_game.mixer.music.get_busy():
+        py_game.time.Clock().tick(10)
 
 def play_sound(mp3_file, volume=0.5):
     sound_thread = threading.Thread(target=_play ,args=(mp3_file, volume))
@@ -80,7 +44,6 @@ def calculate_line_points(big_center, big_radius, angle):
     y = big_center[1] + big_radius * math.sin(angle)
     return (x, y)
 
-
 def draw_line(circle_position, width):
     if collision_point:
         py_game.draw.line(screen, CURRENT_COLOR, collision_point, circle_position, width)
@@ -94,9 +57,52 @@ def calculate_collision_point(pos, big_center, big_radius, small_radius):
         big_center[0] + (big_radius) * (normal[0] / normal_magnitude),
         big_center[1] + (big_radius) * (normal[1] / normal_magnitude)
     ]
-    
-running = True
-while running:
+
+py_game.init()
+
+WIDTH, HEIGHT = 800, 600
+speed = 2
+line_width = 5
+
+
+big_circle_center = (WIDTH // 2, HEIGHT // 2)
+big_circle_radius = 200
+
+screen = py_game.display.set_mode((WIDTH, HEIGHT))
+py_game.display.set_caption("Bouncing Circle in a Circle")
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+CURRENT_COLOR = BLUE
+
+small_circle_radius = 20
+small_circle_pos = [WIDTH // 2, HEIGHT // 2 -
+                    big_circle_radius + small_circle_radius]
+velocity = [speed, speed]
+
+clock = py_game.time.Clock()
+angle = math.pi / 5
+collision_point = None
+
+
+def can_play_audio():
+    try:
+        py_game.mixer.init()
+        return True
+    except py_game.error:
+        return False
+
+can_play_sound = can_play_audio()
+
+print("Can play sound: ", can_play_sound)
+
+import time
+time.sleep(10000)
+
+while True:
     for event in py_game.event.get():
         if event.type == py_game.QUIT:
             running = False
