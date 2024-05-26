@@ -1,9 +1,9 @@
-import pygame
+import pygame as py_game
 import math
 import random
 import threading
 
-pygame.init()
+py_game.init()
 
 WIDTH, HEIGHT = 800, 600
 speed = 2
@@ -13,8 +13,8 @@ line_width = 5
 big_circle_center = (WIDTH // 2, HEIGHT // 2)
 big_circle_radius = 200
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bouncing Circle in a Circle")
+screen = py_game.display.set_mode((WIDTH, HEIGHT))
+py_game.display.set_caption("Bouncing Circle in a Circle")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -28,18 +28,18 @@ small_circle_pos = [WIDTH // 2, HEIGHT // 2 -
                     big_circle_radius + small_circle_radius]
 velocity = [speed, speed]
 
-clock = pygame.time.Clock()
+clock = py_game.time.Clock()
 angle = math.pi / 5
 collision_point = None
 
 def play_sound(mp3_file, volume=0.5):
     def _play():
-        pygame.mixer.init()
-        pygame.mixer.music.load(mp3_file)
-        pygame.mixer.music.set_volume(volume)
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)
+        py_game.mixer.init()
+        py_game.mixer.music.load(mp3_file)
+        py_game.mixer.music.set_volume(volume)
+        py_game.mixer.music.play()
+        while py_game.mixer.music.get_busy():
+            py_game.time.Clock().tick(10)
     sound_thread = threading.Thread(target=_play)
     sound_thread.start()
 
@@ -75,7 +75,7 @@ def calculate_line_points(big_center, big_radius, angle):
 
 def draw_line(circle_position, width):
     if collision_point:
-        pygame.draw.line(screen, CURRENT_COLOR, collision_point, circle_position, width)
+        py_game.draw.line(screen, CURRENT_COLOR, collision_point, circle_position, width)
 
 def calculate_collision_point(pos, big_center, big_radius, small_radius):
     normal = [pos[0] - big_center[0], pos[1] - big_center[1]]
@@ -89,8 +89,8 @@ def calculate_collision_point(pos, big_center, big_radius, small_radius):
     
 running = True
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+    for event in py_game.event.get():
+        if event.type == py_game.QUIT:
             running = False
 
     small_circle_pos[0] += velocity[0]
@@ -111,11 +111,11 @@ while running:
     screen.fill(BLACK)
 
     draw_line(small_circle_pos, line_width)
-    pygame.draw.circle(screen, CURRENT_COLOR,
+    py_game.draw.circle(screen, CURRENT_COLOR,
                     big_circle_center, big_circle_radius, line_width)
 
-    pygame.draw.circle(screen, WHITE, small_circle_pos, small_circle_radius)
-    pygame.display.flip()
+    py_game.draw.circle(screen, WHITE, small_circle_pos, small_circle_radius)
+    py_game.display.flip()
     clock.tick(60)
     
-pygame.quit()
+py_game.quit()
