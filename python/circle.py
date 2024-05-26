@@ -32,15 +32,23 @@ clock = py_game.time.Clock()
 angle = math.pi / 5
 collision_point = None
 
-def play_sound(mp3_file, volume=0.5):
-    def _play():
+can_play_sound = True
+def _play(mp3_file, volume):
+    try:
         py_game.mixer.init()
+    except:
+        global can_play_sound
+        can_play_sound = False
+    
+    if can_play_sound:
         py_game.mixer.music.load(mp3_file)
         py_game.mixer.music.set_volume(volume)
         py_game.mixer.music.play()
         while py_game.mixer.music.get_busy():
             py_game.time.Clock().tick(10)
-    sound_thread = threading.Thread(target=_play)
+
+def play_sound(mp3_file, volume=0.5):
+    sound_thread = threading.Thread(target=_play ,args=(mp3_file, volume))
     sound_thread.start()
 
 def is_within_big_circle(pos, big_center, big_radius, small_radius):
@@ -105,7 +113,9 @@ while running:
         velocity = [speed * (velocity[0] / vel_magnitude),
                     speed * (velocity[1] / vel_magnitude)]
         CURRENT_COLOR = random_color()
-        play_sound("sound/lq.mp3")
+        
+        if can_play_sound:
+            play_sound("sound/lq.mp3")
 
 
     screen.fill(BLACK)
